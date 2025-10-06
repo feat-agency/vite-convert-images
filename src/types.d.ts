@@ -2,6 +2,7 @@ import { AvifOptions, WebpOptions } from 'sharp';
 export type Options = {
 	/**
 	 * @param {string} assetsDir - Assets directory path
+	 * @default "/src/assets/img",
 	 */
 	assetsDir?: string;
 	/**

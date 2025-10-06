@@ -41,7 +41,7 @@ const viteConvertImages = (_options?: Options): PluginOption => {
 			processFileQueue.add(`${directory}${baseFilename}`);
 
 			if (change.event === 'create' || change.event === 'update') {
-				processQueue.push(async () => await generateImages(id, `${directory}${baseFilename}`, parseInt(scale!), extension === 'avif' ? options.avifOptions! : options.webpOptions!));
+				processQueue.push(async () => await generateImages(id, `${directory}${baseFilename}`, parseInt(scale!), options));
 
 				debounce(async () => {
 					await processQueues(directory!, baseFilename!, options.removableExtensions);

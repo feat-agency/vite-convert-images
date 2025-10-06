@@ -3,6 +3,7 @@ import { readdir, unlink } from "fs/promises";
 import path from "path";
 import pc from "picocolors"
 import { completionTime, formatBytes, loading, logGeneratedFiles } from './helpers';
+import { Options } from 'src/types';
 
 let isProcessing = false;
 const generetedFiles: string[] = [];
@@ -33,7 +34,7 @@ export const generateAvif = async (input: Sharp, output: string, options: AvifOp
 	generetedFiles.push(`${output.split('/').splice(-1)} - ${pc.bold(formatBytes(img.size))}`)
 }
 
-export const generateImages = async (input: string, output: string, initialScale: number = 1, options: WebpOptions | AvifOptions) => {
+export const generateImages = async (input: string, output: string, initialScale: number = 1, options: Options) => {
 	const sharpOriginal = sharp(input);
 	const sharpInstance = sharpOriginal.clone();
 	const { width } = await sharpInstance.metadata();
@@ -45,8 +46,8 @@ export const generateImages = async (input: string, output: string, initialScale
 		const scaledWidth = Math.round(width * (_scale / initialScale));
 		sharpInstance.resize(scaledWidth);
 		promises.push(
-			generateWebp(sharpInstance, `${output}@${_scale}x.webp`, options),
-			generateAvif(sharpInstance, `${output}@${_scale}x.avif`, options)
+			generateWebp(sharpInstance, `${output}@${_scale}x.webp`, options.webpOptions),
+			generateAvif(sharpInstance, `${output}@${_scale}x.avif`, options.avifOptions)
 		);
 	}
 	// GENERATE LQIP IMAGE
