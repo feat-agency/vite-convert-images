@@ -5,7 +5,7 @@ import pc from "picocolors"
 
 const viteConvertImages = (_options?: Options): PluginOption => {
 	const options: Options = {
-		assetsDir: '/src/assets/img',
+		assetsDir: '/src/assets',
 		removableExtensions: [],
 		avifOptions: {
 			quality: 45,
