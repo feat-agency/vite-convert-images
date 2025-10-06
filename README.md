@@ -1,4 +1,4 @@
-# vite-convert-images
+# 🖼️ Vite Convert Images 
 A blazing-fast Vite plugin that automatically converts your raster images into modern formats and responsive variants — with zero hassle.
 ## ✨ Features
 #### 🪄 **Automatic Downscaling**
@@ -35,6 +35,7 @@ export default defineConfig({
   ]
 })
 ```
+This plugin 
 Now if you save your image in `assets` folder it will generate all the conversions
 
 **❗️Importnat Note**
@@ -47,7 +48,25 @@ For example
 | `hero@3x.png`      | `hero@3x.webp`, `hero@3x.avif`, `hero@2x.*`, `hero@1x.*` |
 | `icon@2x.png`      | `icon@2x.webp`, `icon@2x.avif`, `icon@1x.*`              |
 
+## 🕓 Development-Only Behavior
 
+`vite-convert-images` uses Vite’s `watchChange`
+ hook to detect when image files are added, modified or removed.
+This means:
+
+- 🧩 Image conversion runs only while the Vite dev server is active.
+
+- ⚡ It processes new or updated images on the fly — no need to restart the server.
+
+- 🧱 During vite build, you can optionally disable or replace it with your own image optimization step if needed.
+
+This approach ensures that the plugin:
+
+- Doesn’t slow down your production builds
+
+- Keeps development feedback loops instant and responsive
+
+- Provides a live, automatic image pipeline while you work
 
 ## 🚀 Why Use This?
 Modern web performance starts with images. `vite-convert-images` helps you ship smaller, smarter, and future-proof image assets without any manual work.
@@ -57,3 +76,9 @@ Modern web performance starts with images. `vite-convert-images` helps you ship 
 - **Progressive loading UX** — Built-in LQIP means images load gracefully with blur previews.
 - **Developer-friendly workflow** — Just drop your assets in and the plugin handles the rest.
 - **Optimized for modern browsers** — Seamlessly deliver next-gen formats with fallback support.
+
+## 📚 Resources
+- https://web.dev/learn/performance/image-performance
+- https://www.smashingmagazine.com/2021/09/modern-image-formats-avif-webp
+- https://caniuse.com/webp
+- https://caniuse.com/avif
