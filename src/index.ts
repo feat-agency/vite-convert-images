@@ -8,7 +8,7 @@ const viteConvertImages = (_options?: Options): PluginOption => {
 		assetsDir: '/src/assets',
 		removableExtensions: [],
 		avifOptions: {
-			quality: 45,
+			quality: 70,
 			effort: 4,
 			chromaSubsampling: '4:2:0',
 		},

@@ -23,7 +23,7 @@ export const generateWebp = async (input: Sharp, output: string, options: WebpOp
 		.webp(options)
 		.toFile(output);
 
-	generetedFiles.push(`${output.split('/').splice(-1)} - ${pc.bold(formatBytes(img.size))}`)
+	generetedFiles.push(`${output.split('/').splice(-1)} - ${pc.bold(formatBytes(img.size))} ${pc.dim(`(${img.width}px x ${img.height}px)`)}`);
 }
 
 export const generateAvif = async (input: Sharp, output: string, options: AvifOptions = {}) => {
@@ -31,7 +31,7 @@ export const generateAvif = async (input: Sharp, output: string, options: AvifOp
 		.avif(options)
 		.toFile(output);
 
-	generetedFiles.push(`${output.split('/').splice(-1)} - ${pc.bold(formatBytes(img.size))}`)
+	generetedFiles.push(`${output.split('/').splice(-1)} - ${pc.bold(formatBytes(img.size))} ${pc.dim(`(${img.width}px x ${img.height}px)`)}`);
 }
 
 export const generateImages = async (input: string, output: string, initialScale: number = 1, options: Options) => {
@@ -67,7 +67,6 @@ export const runWithConcurrency = async <T>(
 	const executing: Promise<void>[] = [];
 
 	for (const task of tasks) {
-		// Start the task and handle completion
 		const p = Promise.resolve()
 			.then(task)
 			.then(
@@ -75,22 +74,17 @@ export const runWithConcurrency = async <T>(
 				reason => results.push({ status: 'rejected', reason })
 			)
 			.finally(() => {
-				// remove finished task from executing
 				const idx = executing.indexOf(p as any);
 				if (idx >= 0) executing.splice(idx, 1);
 			});
 
 		executing.push(p as any);
 
-		// If we hit concurrency limit, wait for one to finish
-		console.log(executing.length, limit);
-
 		if (executing.length >= limit) {
 			await Promise.race(executing);
 		}
 	}
 
-	// Wait for remaining tasks
 	await Promise.allSettled(executing);
 
 	return results;
