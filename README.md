@@ -40,7 +40,7 @@ Now if you save your image in `assets` folder it will generate all the conversio
 
 **❗️Importnat Note**
 
-Images must be named end with `@2x`, `@3x`, `@4x` etc. because the covnersion count depends on this number.
+Images name must be end with `@2x`, `@3x`, `@4x` etc. because the covnersion count depends on this number.
 
 For example
 | Input File         | Generated Assets                                         |
@@ -57,8 +57,6 @@ This means:
 - 🧩 Image conversion runs only while the Vite dev server is active.
 
 - ⚡ It processes new or updated images on the fly — no need to restart the server.
-
-- 🧱 During vite build, you can optionally disable or replace it with your own image optimization step if needed.
 
 This approach ensures that the plugin:
 
