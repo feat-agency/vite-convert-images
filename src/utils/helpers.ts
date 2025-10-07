@@ -16,6 +16,7 @@ export const loading = () => {
 
 	const end = () => {
 		clearInterval(interval.value!);
+		console.clear();
 	}
 
 	return {

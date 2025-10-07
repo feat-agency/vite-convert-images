@@ -19,4 +19,9 @@ export type Options = {
 	 * @see {@link https://sharp.pixelplumbing.com/api-output#webp}
 	 */
 	webpOptions?: WebpOptions;
+	/**
+	 * @param {number} batchSize - Number of concurrent image processing tasks
+	 * @default 4
+	 */
+	batchSize?: number;
 }

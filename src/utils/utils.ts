@@ -59,32 +59,66 @@ export const generateImages = async (input: string, output: string, initialScale
 
 }
 
+export const runWithConcurrency = async <T>(
+	tasks: (() => Promise<T>)[],
+	limit: number
+): Promise<PromiseSettledResult<T>[]> => {
+	const results: PromiseSettledResult<T>[] = [];
+	const executing: Promise<void>[] = [];
 
+	for (const task of tasks) {
+		// Start the task and handle completion
+		const p = Promise.resolve()
+			.then(task)
+			.then(
+				value => results.push({ status: 'fulfilled', value }),
+				reason => results.push({ status: 'rejected', reason })
+			)
+			.finally(() => {
+				// remove finished task from executing
+				const idx = executing.indexOf(p as any);
+				if (idx >= 0) executing.splice(idx, 1);
+			});
 
-export const processQueues = async (directory: string, baseFilename: string, removableExtensions: string[] = []) => {
+		executing.push(p as any);
+
+		// If we hit concurrency limit, wait for one to finish
+		console.log(executing.length, limit);
+
+		if (executing.length >= limit) {
+			await Promise.race(executing);
+		}
+	}
+
+	// Wait for remaining tasks
+	await Promise.allSettled(executing);
+
+	return results;
+}
+
+export const processQueues = async (directory: string, baseFilename: string, options: Options) => {
 	if (isProcessing) return;
 	isProcessing = true;
 	queueTime.start();
 	loader.start();
-	return new Promise<void>(async (resolve) => {
-		while (processQueue.length > 0) {
-			const batch = processQueue.slice();
-			processQueue.length = 0;
+	while (processQueue.length > 0) {
+		await new Promise(r => setTimeout(r, 100));
+		const batch = processQueue.slice();
+		processQueue.length = 0;
 
-			await Promise.allSettled(batch.map(item => item()));
-		}
-		removableExtensions.forEach(async ext => {
+		await runWithConcurrency(batch, options.batchSize || 4);
+	}
+	if (options.removableExtensions) {
+		options.removableExtensions.forEach(async ext => {
 			await deleteMatching(directory!, new RegExp(`${baseFilename}@.*.${ext}`));
 		});
-		isProcessing = false;
-		loader.end();
-		console.clear();
-		logGeneratedFiles(generetedFiles);
-		queueTime.end();
-		await delay(200);
-		processFileQueue.clear();
-		resolve();
-	})
+	}
+	isProcessing = false;
+	loader.end();
+	logGeneratedFiles(generetedFiles);
+	queueTime.end();
+	await delay(200);
+	processFileQueue.clear();
 }
 
 export const delay = (ms: number) => {

@@ -9,15 +9,16 @@ const viteConvertImages = (_options?: Options): PluginOption => {
 		removableExtensions: [],
 		avifOptions: {
 			quality: 45,
-			effort: 8,
+			effort: 4,
 			chromaSubsampling: '4:2:0',
 		},
 		webpOptions: {
 			quality: 90,
-			effort: 6,
+			effort: 4,
 			smartSubsample: true,
 			nearLossless: false,
 		},
+		batchSize: 4,
 		..._options
 	}
 	return {
@@ -44,7 +45,7 @@ const viteConvertImages = (_options?: Options): PluginOption => {
 				processQueue.push(async () => await generateImages(id, `${directory}${baseFilename}`, parseInt(scale!), options));
 
 				debounce(async () => {
-					await processQueues(directory!, baseFilename!, options.removableExtensions);
+					processQueues(directory!, baseFilename!, options);
 				}, 100)
 			}
 
