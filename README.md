@@ -1,5 +1,5 @@
 # 🖼️ Vite Convert Images 
-A blazing-fast Vite plugin that automatically converts your raster images into modern formats and responsive variants — with zero hassle.
+A Vite plugin that automatically converts your raster images into modern formats and responsive variants — with zero hassle.
 ## ✨ Features
 #### 🪄 **Automatic Downscaling**
 If you include high-density assets like `image@2x.png` or `image@3x.jpg`, the plugin will:
