@@ -2,12 +2,11 @@ import sharp, { AvifOptions, Sharp, WebpOptions } from 'sharp';
 import { readdir, unlink } from "fs/promises";
 import path from "path";
 import pc from "picocolors"
-import { completionTime, formatBytes, loading, logGeneratedFiles } from './helpers';
+import { completionTime, formatBytes, logGeneratedFiles, updateProgressBar } from './helpers';
 import { Options } from 'src/types';
 
 let isProcessing = false;
 const generetedFiles: string[] = [];
-const loader = loading();
 const queueTime = completionTime()
 
 export let processQueue: (() => Promise<void>)[] = [];
@@ -90,17 +89,34 @@ export const runWithConcurrency = async <T>(
 	return results;
 }
 
+
 export const processQueues = async (directory: string, baseFilename: string, options: Options) => {
 	if (isProcessing) return;
 	isProcessing = true;
+	console.clear();
 	queueTime.start();
-	loader.start();
 	while (processQueue.length > 0) {
 		await new Promise(r => setTimeout(r, 100));
 		const batch = processQueue.slice();
 		processQueue.length = 0;
 
-		await runWithConcurrency(batch, options.batchSize || 4);
+		const total = batch.length;
+		let done = 0;
+
+		console.log(pc.cyan(`\n\n 🛠️  Processing ${total} item(s)...`));
+		updateProgressBar(done, total);
+
+		await runWithConcurrency(
+			batch.map(item => async () => {
+				try {
+					await item();
+				} finally {
+					done++;
+					updateProgressBar(done, total);
+				}
+			}),
+			options.batchSize || 4
+		);
 	}
 	if (options.removableExtensions) {
 		options.removableExtensions.forEach(async ext => {
@@ -108,8 +124,7 @@ export const processQueues = async (directory: string, baseFilename: string, opt
 		});
 	}
 	isProcessing = false;
-	loader.end();
-	logGeneratedFiles(generetedFiles);
+	options.logGeneratedFiles && logGeneratedFiles(generetedFiles);
 	queueTime.end();
 	await delay(200);
 	processFileQueue.clear();

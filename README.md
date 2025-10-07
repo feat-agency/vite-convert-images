@@ -35,12 +35,11 @@ export default defineConfig({
   ]
 })
 ```
-This plugin 
-Now if you save your image in `assets` folder it will generate all the conversions
+If you save your image in `assets` folder it will generate all the conversions
 
 **❗️Importnat Note**
 
-Images name must be end with `@2x`, `@3x`, `@4x` etc. because the covnersion count depends on this number.
+Images name must be end with `@2x`, `@3x`, `@4x` etc. because the conversions count depends on this number.
 
 For example
 | Input File         | Generated Assets                                         |

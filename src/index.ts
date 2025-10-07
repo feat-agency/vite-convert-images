@@ -19,6 +19,7 @@ const viteConvertImages = (_options?: Options): PluginOption => {
 			nearLossless: false,
 		},
 		batchSize: 4,
+		logGeneratedFiles: true,
 		..._options
 	}
 	return {

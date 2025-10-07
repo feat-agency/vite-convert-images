@@ -24,4 +24,9 @@ export type Options = {
 	 * @default 4
 	 */
 	batchSize?: number;
+	/**
+	 * @param {boolean} logGeneratedFiles - Log generated files to the console
+	 * @default true
+	 */
+	logGeneratedFiles?: boolean;
 }

@@ -1,29 +1,18 @@
 import pc from "picocolors"
+import readline from 'readline';
 
-export const loading = () => {
-	const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
-	let i = 0;
-	let interval: { value: NodeJS.Timeout | null } = { value: null };
-	const start = () => {
-		interval.value = setInterval(() => {
-			const frame = frames[i = (i + 1) % frames.length];
-			console.clear();
-			console.log(
-				`\r${pc.green(frame)} Processing image(s)...`
-			);
-		}, 120);
-	}
+export const renderProgressBar = (done: number, total: number, width = 30) => {
+	const ratio = total === 0 ? 0 : done / total;
+	const filled = Math.round(width * ratio);
+	const empty = width - filled;
+	const bar = `${pc.green('█').repeat(filled)}${pc.dim('░').repeat(empty)}`;
+	return `[${bar}] ${done}/${total}`;
+}
 
-	const end = () => {
-		clearInterval(interval.value!);
-		console.clear();
-	}
-
-	return {
-		start,
-		end,
-	}
-};
+export const updateProgressBar = (done: number, total: number) => {
+	readline.cursorTo(process.stdout, 0);
+	process.stdout.write(`${renderProgressBar(done, total)}`);
+}
 
 export const formatBytes = (bytes: number) => {
 	const units = [
@@ -51,7 +40,7 @@ export const completionTime = () => {
 	const end = () => {
 		const end = performance.now();
 		const seconds = ((end - _start) / 1000).toFixed(2);
-		console.log(pc.green(`\n✅ Completed in ${seconds}s`));
+		console.log(pc.green(`\n\n✅ Completed in ${seconds}s`));
 	}
 
 	return {
