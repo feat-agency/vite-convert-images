@@ -1,27 +1,11 @@
-import { PluginOption } from "vite";
+import type { Plugin } from "vite";
 import { Options } from "./types";
-import { debounce, delay, deleteMatching, generateImages, pathToRegex, processFileQueue, processQueue, processQueues, removeQueue } from "./utils/utils";
+import { debounce, delay, deleteMatching, generateImages, options, pathToRegex, processFileQueue, processQueue, processQueues, removeQueue, setOptions } from "./utils/utils";
 import pc from "picocolors"
 
-const viteConvertImages = (_options?: Options): PluginOption => {
-	const options: Options = {
-		assetsDir: '/src/assets',
-		removableExtensions: [],
-		avifOptions: {
-			quality: 70,
-			effort: 4,
-			chromaSubsampling: '4:2:0',
-		},
-		webpOptions: {
-			quality: 90,
-			effort: 4,
-			smartSubsample: true,
-			nearLossless: false,
-		},
-		batchSize: 4,
-		logGeneratedFiles: true,
-		..._options
-	}
+const viteConvertImages = (_options?: Options): Plugin => {
+	setOptions(_options || {});
+
 	return {
 		name: "vite-plugin-convert-images",
 		watchChange: async (id, change) => {
@@ -55,7 +39,7 @@ const viteConvertImages = (_options?: Options): PluginOption => {
 				removeQueue.add(`${directory}${baseFilename}`);
 				await deleteMatching(directory!, new RegExp(`${baseFilename}@.*`));
 				await delay(200);
-				console.log(`🗑️ File deleted: ${pc.redBright(baseFilename)}`);
+				console.log(`\n\n🗑️ File deleted: ${pc.redBright(baseFilename)}`);
 				removeQueue.delete(`${directory}${baseFilename}`);
 				processFileQueue.delete(`${directory}${baseFilename}`);
 			}

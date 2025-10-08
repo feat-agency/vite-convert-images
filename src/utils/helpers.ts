@@ -1,6 +1,12 @@
 import pc from "picocolors"
 import readline from 'readline';
 
+/** Render a progress bar string
+ * @param done Number of completed tasks
+ * @param total Total number of tasks
+ * @param width Width of the progress bar
+ * @returns Progress bar string
+ */
 export const renderProgressBar = (done: number, total: number, width = 30) => {
 	const ratio = total === 0 ? 0 : done / total;
 	const filled = Math.round(width * ratio);
@@ -9,11 +15,19 @@ export const renderProgressBar = (done: number, total: number, width = 30) => {
 	return `[${bar}] ${done}/${total}`;
 }
 
+/** Update the progress bar in the console
+ * @param done Number of completed tasks
+ * @param total Total number of tasks
+ */
 export const updateProgressBar = (done: number, total: number) => {
 	readline.cursorTo(process.stdout, 0);
 	process.stdout.write(`${renderProgressBar(done, total)}`);
 }
 
+/** Format bytes as human-readable text
+ * @param bytes Number of bytes
+ * @returns Formatted bytes as string
+ */
 export const formatBytes = (bytes: number) => {
 	const units = [
 		{ name: 'GB', value: 1024 ** 3 },
@@ -31,7 +45,10 @@ export const formatBytes = (bytes: number) => {
 	return '0 Bytes';
 }
 
-export const completionTime = () => {
+/** Simple timer utility
+ * @returns start and end functions
+ */
+export const timer = () => {
 	let _start = 0;
 	const start = () => {
 		_start = performance.now()
@@ -49,6 +66,9 @@ export const completionTime = () => {
 	}
 }
 
+/** Log generated files to the console
+ * @param files Array of generated file paths
+ */
 export const logGeneratedFiles = (files: string[]) => {
 	if (files.length > 0) {
 		console.log(pc.blue('\n📸 Generated files:'));

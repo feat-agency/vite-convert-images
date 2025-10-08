@@ -1,38 +1,61 @@
-import sharp, { AvifOptions, Sharp, WebpOptions } from 'sharp';
+import sharp from 'sharp';
 import { readdir, unlink } from "fs/promises";
 import path from "path";
 import pc from "picocolors"
-import { completionTime, formatBytes, logGeneratedFiles, updateProgressBar } from './helpers';
+import { timer, logGeneratedFiles, updateProgressBar } from './helpers';
 import { Options } from 'src/types';
+import { generateLqip, generatorMap } from './generators';
 
 let isProcessing = false;
-const generetedFiles: string[] = [];
-const queueTime = completionTime()
+const queueTimer = timer();
 
 export let processQueue: (() => Promise<void>)[] = [];
 export const processFileQueue = new Set<string>();
 export const removeQueue = new Set<string>();
+export const generetedFiles: string[] = [];
+export let options: Options = {
+	assetsDir: '/src/assets',
+	removableExtensions: [],
+	formats: ['avif', 'webp'],
+	formatOptions: {
+		avif: {
+			quality: 70,
+			effort: 4,
+			chromaSubsampling: '4:2:0',
+		},
+		webp: {
+			quality: 90,
+			effort: 4,
+			smartSubsample: true,
+			nearLossless: false,
+		}
+	},
+	batchSize: 4,
+	logGeneratedFiles: true,
+}
+/** Set or update options
+ * @param _options Options
+ */
+export const setOptions = (_options: Options) => {
+	options = { ...options, ..._options }
+}
 
+/** Escape special characters in a path string for use in a regular expression
+ * @param path Path string
+ * @returns Escaped path string
+ */
 export const pathToRegex = (path: string): string => {
 	return path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-export const generateWebp = async (input: Sharp, output: string, options: WebpOptions = {}) => {
-	const img = await input
-		.webp(options)
-		.toFile(output);
 
-	generetedFiles.push(`${output.split('/').splice(-1)} - ${pc.bold(formatBytes(img.size))} ${pc.dim(`(${img.width}px x ${img.height}px)`)}`);
-}
-
-export const generateAvif = async (input: Sharp, output: string, options: AvifOptions = {}) => {
-	const img = await input
-		.avif(options)
-		.toFile(output);
-
-	generetedFiles.push(`${output.split('/').splice(-1)} - ${pc.bold(formatBytes(img.size))} ${pc.dim(`(${img.width}px x ${img.height}px)`)}`);
-}
-
+/**
+ * Generate images in .webp and .avif formats at different scales
+ * @param input input file path
+ * @param output output file path without scale and extension
+ * @param initialScale initial scale (e.g., 2 for @2x)
+ * @param options Options
+ */
 export const generateImages = async (input: string, output: string, initialScale: number = 1, options: Options) => {
 	const sharpOriginal = sharp(input);
 	const sharpInstance = sharpOriginal.clone();
@@ -44,20 +67,25 @@ export const generateImages = async (input: string, output: string, initialScale
 		const _scale = i;
 		const scaledWidth = Math.round(width * (_scale / initialScale));
 		sharpInstance.resize(scaledWidth);
-		promises.push(
-			generateWebp(sharpInstance, `${output}@${_scale}x.webp`, options.webpOptions),
-			generateAvif(sharpInstance, `${output}@${_scale}x.avif`, options.avifOptions)
-		);
+		options.formats?.forEach(format => {
+			const generator = generatorMap[format];
+			promises.push(generator.generate(sharpInstance, `${output}@${_scale}x.${generator.extension}`, options.formatOptions?.[format]));
+		})
 	}
 	// GENERATE LQIP IMAGE
 	sharpInstance.resize(64);
 	promises.push(
-		generateWebp(sharpInstance, `${output}@lqip.webp`, { quality: 1 }),
+		generateLqip(sharpInstance, `${output}@lqip.webp`),
 	);
 	await Promise.allSettled(promises);
 
 }
 
+/** Run promises with concurrency limit
+ * @param tasks Array of functions returning promises
+ * @param limit Concurrency limit
+ * @returns Array of PromiseSettledResult
+ */
 export const runWithConcurrency = async <T>(
 	tasks: (() => Promise<T>)[],
 	limit: number
@@ -89,12 +117,16 @@ export const runWithConcurrency = async <T>(
 	return results;
 }
 
-
+/** Process the queue of image generation tasks
+ * @param directory Directory path
+ * @param baseFilename Base filename without scale and extension
+ * @param options Options
+ */
 export const processQueues = async (directory: string, baseFilename: string, options: Options) => {
 	if (isProcessing) return;
 	isProcessing = true;
 	console.clear();
-	queueTime.start();
+	queueTimer.start();
 	while (processQueue.length > 0) {
 		await new Promise(r => setTimeout(r, 100));
 		const batch = processQueue.slice();
@@ -103,7 +135,7 @@ export const processQueues = async (directory: string, baseFilename: string, opt
 		const total = batch.length;
 		let done = 0;
 
-		console.log(pc.cyan(`\n\n 🛠️  Processing ${total} item(s)...`));
+		console.log(pc.cyan(`\n\n 🛠️  Processing ${total} image(s)...`));
 		updateProgressBar(done, total);
 
 		await runWithConcurrency(
@@ -125,15 +157,24 @@ export const processQueues = async (directory: string, baseFilename: string, opt
 	}
 	isProcessing = false;
 	options.logGeneratedFiles && logGeneratedFiles(generetedFiles);
-	queueTime.end();
+	queueTimer.end();
 	await delay(200);
 	processFileQueue.clear();
 }
 
+/** Delay for a specified number of milliseconds
+ * @param ms Milliseconds to delay
+ * @returns Promise that resolves after the delay
+ */
 export const delay = (ms: number) => {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/**
+ * Delete files in a directory matching a pattern
+ * @param dir Directory path
+ * @param pattern RegExp pattern to match filenames
+ */
 export const deleteMatching = async (dir: string, pattern: RegExp) => {
 	const files = await readdir(dir);
 	const matches = files.filter(f => pattern.test(f));
@@ -145,6 +186,7 @@ export const deleteMatching = async (dir: string, pattern: RegExp) => {
 	});
 }
 
+/** Debounce function */
 let timeout: { value: NodeJS.Timeout | null } = { value: null };
 export const debounce = (cb: () => void, wait: number) => {
 	if (timeout.value) {

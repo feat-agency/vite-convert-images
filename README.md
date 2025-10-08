@@ -44,8 +44,8 @@ Images name must be end with `@2x`, `@3x`, `@4x` etc. because the conversions co
 For example
 | Input File         | Generated Assets                                         |
 | ------------------ | -------------------------------------------------------- |
-| `hero@3x.png`      | `hero@3x.webp`, `hero@3x.avif`, `hero@2x.*`, `hero@1x.*` |
-| `icon@2x.png`      | `icon@2x.webp`, `icon@2x.avif`, `icon@1x.*`              |
+| `hero@3x.png`      | `hero@3x.webp`, `hero@3x.avif`, `hero@2x.*`, `hero@1x.*`, `hero@lqip.web` |
+| `icon@2x.png`      | `icon@2x.webp`, `icon@2x.avif`, `icon@1x.*`, `icon@lqip.webp`              |
 
 ## 🕓 Development-Only Behavior
 

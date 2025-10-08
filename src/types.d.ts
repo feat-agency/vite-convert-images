@@ -2,9 +2,21 @@ import { AvifOptions, WebpOptions } from 'sharp';
 export type Options = {
 	/**
 	 * @param {string} assetsDir - Assets directory path
-	 * @default "/src/assets/img",
+	 * @default "/src/assets",
 	 */
 	assetsDir?: string;
+	/**
+	 * @param {('avif' | 'webp' | 'png' | 'jpg')[]} formats - Image formats to convert to
+	 */
+	formats?: ('avif' | 'webp' | 'png' | 'jpg')[];
+	/**
+	 * @param {Record<string, any>} formatOptions - Options for each format
+	 */
+	formatOptions?: {
+		[key: string]: any;
+		avif?: AvifOptions;
+		webp?: WebpOptions;
+	},
 	/**
 	 * @param {string[]} removableExtensions - Remove files with these extensions when the sconversion finishes
 	 */
