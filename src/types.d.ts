@@ -1,4 +1,4 @@
-import { AvifOptions, WebpOptions } from 'sharp';
+import { AvifOptions, JpegOptions, PngOptions, WebpOptions } from 'sharp';
 
 
 export type ImageFormat = 'avif' | 'webp' | 'png' | 'jpg';
@@ -21,6 +21,8 @@ export type BaseOptions<F extends ImageFormat = DefaultFormats[number] | ImageFo
 		[key: string]: any;
 		avif?: AvifOptions;
 		webp?: WebpOptions;
+		jpg?: JpegOptions;
+		png?: PngOptions;
 	},
 	/**
 	 * @param {Exclude<ImageFormat, Fmts[number]>[]} removableExtensions - Remove files with these extensions when the sconversion finishes
