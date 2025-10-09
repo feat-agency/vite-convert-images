@@ -31,7 +31,7 @@ export let options: BaseOptions = {
 		}
 	},
 	batchSize: 4,
-	logGeneratedFiles: false,
+	enableLogs: false,
 }
 /** Set or update options
  * @param _options Options
@@ -155,7 +155,7 @@ export const processQueues = async (directory: string, baseFilename: string, opt
 		);
 	}
 	isProcessing = false;
-	options.logGeneratedFiles && logGeneratedFiles(generetedFiles);
+	options.enableLogs && logGeneratedFiles(generetedFiles);
 	queueTimer.end();
 	await delay(200);
 	processFileQueue.clear();

@@ -17,6 +17,7 @@ Handles multiple images in parallel for maximum performance.
 Install, enable, and enjoy optimized images instantly.
 
 ![Demo](./demo.gif)
+<sub>Added 3 image and 2 more 1 seconds later</sub>
 
 ## 📦 Installation
 ```bash

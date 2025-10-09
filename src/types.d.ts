@@ -34,9 +34,9 @@ export type BaseOptions<F extends ImageFormat = DefaultFormats[number] | ImageFo
 	 */
 	batchSize?: number;
 	/**
-	 * @param {boolean} logGeneratedFiles - Log generated files to the console
+	 * @param {boolean} enableLogs - Log generated files to the console
 	 * @default true
 	 */
-	logGeneratedFiles?: boolean;
+	enableLogs?: boolean;
 };
 
