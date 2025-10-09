@@ -3,8 +3,8 @@ import { readdir, unlink } from "fs/promises";
 import path from "path";
 import pc from "picocolors"
 import { timer, logGeneratedFiles, updateProgressBar } from './helpers';
-import { Options } from 'src/types';
 import { generateLqip, generatorMap } from './generators';
+import { BaseOptions } from 'src/types';
 
 let isProcessing = false;
 const queueTimer = timer();
@@ -13,7 +13,7 @@ export let processQueue: (() => Promise<void>)[] = [];
 export const processFileQueue = new Set<string>();
 export const removeQueue = new Set<string>();
 export const generetedFiles: string[] = [];
-export let options: Options = {
+export let options: BaseOptions = {
 	assetsDir: '/src/assets',
 	removableExtensions: [],
 	formats: ['avif', 'webp'],
@@ -31,12 +31,12 @@ export let options: Options = {
 		}
 	},
 	batchSize: 4,
-	logGeneratedFiles: true,
+	logGeneratedFiles: false,
 }
 /** Set or update options
  * @param _options Options
  */
-export const setOptions = (_options: Options) => {
+export const setOptions = (_options: any) => {
 	options = { ...options, ..._options }
 }
 
@@ -56,7 +56,8 @@ export const pathToRegex = (path: string): string => {
  * @param initialScale initial scale (e.g., 2 for @2x)
  * @param options Options
  */
-export const generateImages = async (input: string, output: string, initialScale: number = 1, options: Options) => {
+export const generateImages = async (input: string, directory: string, baseFilename: string, initialScale: number = 1, options: BaseOptions) => {
+	const output = path.resolve(`${directory}${baseFilename}`);
 	const sharpOriginal = sharp(input);
 	const sharpInstance = sharpOriginal.clone();
 	const { width } = await sharpInstance.metadata();
@@ -78,6 +79,9 @@ export const generateImages = async (input: string, output: string, initialScale
 		generateLqip(sharpInstance, `${output}@lqip.webp`),
 	);
 	await Promise.allSettled(promises);
+	options?.removableExtensions?.forEach(async ext => {
+		await deleteMatching(directory!, new RegExp(`${baseFilename}@.*.${ext}`));
+	});
 
 }
 
@@ -122,7 +126,7 @@ export const runWithConcurrency = async <T>(
  * @param baseFilename Base filename without scale and extension
  * @param options Options
  */
-export const processQueues = async (directory: string, baseFilename: string, options: Options) => {
+export const processQueues = async (directory: string, baseFilename: string, options: BaseOptions) => {
 	if (isProcessing) return;
 	isProcessing = true;
 	console.clear();
@@ -149,11 +153,6 @@ export const processQueues = async (directory: string, baseFilename: string, opt
 			}),
 			options.batchSize || 4
 		);
-	}
-	if (options.removableExtensions) {
-		options.removableExtensions.forEach(async ext => {
-			await deleteMatching(directory!, new RegExp(`${baseFilename}@.*.${ext}`));
-		});
 	}
 	isProcessing = false;
 	options.logGeneratedFiles && logGeneratedFiles(generetedFiles);

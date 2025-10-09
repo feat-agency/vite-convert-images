@@ -1,14 +1,19 @@
 import { AvifOptions, WebpOptions } from 'sharp';
-export type Options = {
+
+
+export type ImageFormat = 'avif' | 'webp' | 'png' | 'jpg';
+export type DefaultFormats = ['avif', 'webp'];
+type NonEmptyTuple<T> = [T, ...T[]];
+export type BaseOptions<F extends ImageFormat = DefaultFormats[number] | ImageFormat> = {
 	/**
 	 * @param {string} assetsDir - Assets directory path
 	 * @default "/src/assets",
 	 */
 	assetsDir?: string;
 	/**
-	 * @param {('avif' | 'webp' | 'png' | 'jpg')[]} formats - Image formats to convert to
+	 * @param {Fmts} formats - Image formats to convert to
 	 */
-	formats?: ('avif' | 'webp' | 'png' | 'jpg')[];
+	formats?: NonEmptyTuple<F>;
 	/**
 	 * @param {Record<string, any>} formatOptions - Options for each format
 	 */
@@ -18,19 +23,9 @@ export type Options = {
 		webp?: WebpOptions;
 	},
 	/**
-	 * @param {string[]} removableExtensions - Remove files with these extensions when the sconversion finishes
+	 * @param {Exclude<ImageFormat, Fmts[number]>[]} removableExtensions - Remove files with these extensions when the sconversion finishes
 	 */
-	removableExtensions?: string[];
-	/**
-	 * @param {AvifOptions} avifOptions - Avif conversion options
-	 * @see {@link https://sharp.pixelplumbing.com/api-output#avif}
-	 */
-	avifOptions?: AvifOptions;
-	/**
-	 * @param {WebpOptions} webpOptions - Webp conversion options
-	 * @see {@link https://sharp.pixelplumbing.com/api-output#webp}
-	 */
-	webpOptions?: WebpOptions;
+	removableExtensions?: Exclude<ImageFormat, F>[];
 	/**
 	 * @param {number} batchSize - Number of concurrent image processing tasks
 	 * @default 4
@@ -41,4 +36,5 @@ export type Options = {
 	 * @default true
 	 */
 	logGeneratedFiles?: boolean;
-}
+};
+

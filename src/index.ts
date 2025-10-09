@@ -1,9 +1,11 @@
 import type { Plugin } from "vite";
-import { Options } from "./types";
+import { BaseOptions, DefaultFormats, ImageFormat } from "./types";
 import { debounce, delay, deleteMatching, generateImages, options, pathToRegex, processFileQueue, processQueue, processQueues, removeQueue, setOptions } from "./utils/utils";
 import pc from "picocolors"
 
-const viteConvertImages = (_options?: Options): Plugin => {
+const viteConvertImages = <F extends ImageFormat = DefaultFormats[number] | ImageFormat>(
+	_options?: BaseOptions<F>
+): Plugin => {
 	setOptions(_options || {});
 
 	return {
@@ -27,7 +29,7 @@ const viteConvertImages = (_options?: Options): Plugin => {
 			processFileQueue.add(`${directory}${baseFilename}`);
 
 			if (change.event === 'create' || change.event === 'update') {
-				processQueue.push(async () => await generateImages(id, `${directory}${baseFilename}`, parseInt(scale!), options));
+				processQueue.push(async () => await generateImages(id, directory!, baseFilename!, parseInt(scale!), options));
 
 				debounce(async () => {
 					processQueues(directory!, baseFilename!, options);
