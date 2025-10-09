@@ -1,7 +1,6 @@
 import type { Plugin } from "vite";
 import { BaseOptions, DefaultFormats, ImageFormat } from "./types";
 import { debounce, delay, deleteMatching, generateImages, options, pathToRegex, processFileQueue, processQueue, processQueues, removeQueue, setOptions } from "./utils/utils";
-import pc from "picocolors"
 
 const viteConvertImages = <F extends ImageFormat = DefaultFormats[number] | ImageFormat>(
 	_options?: BaseOptions<F>
@@ -41,7 +40,6 @@ const viteConvertImages = <F extends ImageFormat = DefaultFormats[number] | Imag
 				removeQueue.add(`${directory}${baseFilename}`);
 				await deleteMatching(directory!, new RegExp(`${baseFilename}@.*`));
 				await delay(200);
-				console.log(`\n\n🗑️ File deleted: ${pc.redBright(baseFilename)}`);
 				removeQueue.delete(`${directory}${baseFilename}`);
 				processFileQueue.delete(`${directory}${baseFilename}`);
 			}
