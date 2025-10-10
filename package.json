@@ -26,7 +26,10 @@
 		"lint": "oxlint src",
 		"lint:fix": "oxlint src --fix",
 		"format": "prettier --write src/**/*.{ts,tsx,json,md}",
-		"format:check": "prettier --check src/**/*.{ts,tsx,json,md}"
+		"format:check": "prettier --check src/**/*.{ts,tsx,json,md}",
+		"docs:dev": "vitepress dev docs/docs",
+		"docs:build": "vitepress build docs/docs",
+		"docs:preview": "vitepress preview docs/docs"
 	},
 	"keywords": [
 		"vite",
@@ -60,7 +63,8 @@
 		"tsup": "^8.5",
 		"typescript": "^5.9",
 		"vite": "^7",
-		"vitest": "^3.2"
+		"vitest": "^3.2",
+		"vitepress": "^1.6"
 	},
 	"dependencies": {
 		"sharp": "^0.34",

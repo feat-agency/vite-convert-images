@@ -25,7 +25,7 @@ export type BaseOptions<F extends ImageFormat = DefaultFormats[number] | ImageFo
 		png?: PngOptions;
 	},
 	/**
-	 * @param {Exclude<ImageFormat, Fmts[number]>[]} removableExtensions - Remove files with these extensions when the sconversion finishes
+	 * @param {Exclude<ImageFormat, Fmts[number]>[]} removableExtensions - Remove files with these extensions when the conversion finishes
 	 */
 	removableExtensions?: Exclude<ImageFormat, F>[];
 	/**

@@ -2,3 +2,5 @@ node_modules
 test
 .DS_Store
 dist
+docs/docs/.vitepress/dist
+docs/docs/.vitepress/cache
