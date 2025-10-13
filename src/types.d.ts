@@ -11,7 +11,7 @@ export type BaseOptions<F extends ImageFormat = DefaultFormats[number] | ImageFo
 	 */
 	assetsDir?: string;
 	/**
-	 * @param {Fmts} formats - Image formats to convert to
+	 * @param {ImageFormat[]} formats - Image formats to convert to
 	 */
 	formats?: NonEmptyTuple<F>;
 	/**
@@ -25,7 +25,7 @@ export type BaseOptions<F extends ImageFormat = DefaultFormats[number] | ImageFo
 		png?: PngOptions;
 	},
 	/**
-	 * @param {Exclude<ImageFormat, Fmts[number]>[]} removableExtensions - Remove files with these extensions when the conversion finishes
+	 * @param {Exclude<ImageFormat, F>[]} removableExtensions - Remove files with these extensions when the conversion finishes
 	 */
 	removableExtensions?: Exclude<ImageFormat, F>[];
 	/**
@@ -34,9 +34,18 @@ export type BaseOptions<F extends ImageFormat = DefaultFormats[number] | ImageFo
 	 */
 	batchSize?: number;
 	/**
+	 * @param {boolean} enableScaledVariants - Generate scaled variants based on the highest-resolution image
+	 * @default true
+	 */
+	enableScaledVariants?: boolean;
+	/**
 	 * @param {boolean} enableLogs - Log generated files to the console
 	 * @default true
 	 */
 	enableLogs?: boolean;
+	/**
+	 * @param {RegExp} nameLabel - Regular expression to capture a label in the filename (e.g., '@2x', '-large', '_thumbnail')
+	 */
+	nameLabel?: RegExp;
 };
 

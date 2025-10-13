@@ -15,7 +15,6 @@ const viteConvertImages = <F extends ImageFormat = DefaultFormats[number] | Imag
 				`^(.+${path}.*?)([^/]+)@(\\d)x\\.(png|jpe?g|webp|avif)$`,
 				"i"
 			);
-
 			const match = id.match(regex);
 			const directory = match?.[1];
 			const baseFilename = match?.[2];

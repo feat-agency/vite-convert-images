@@ -31,6 +31,7 @@ export let options: BaseOptions = {
 		}
 	},
 	batchSize: 4,
+	enableScaledVariants: true,
 	enableLogs: false,
 }
 /** Set or update options
@@ -64,14 +65,21 @@ export const generateImages = async (input: string, directory: string, baseFilen
 	if (!width) return;
 	const promises: Promise<void>[] = [];
 	// GENERATE .WEBP, .AVIF CONVERSIONS
-	for (let i = initialScale; i > 0; i--) {
-		const _scale = i;
-		const scaledWidth = Math.round(width * (_scale / initialScale));
-		sharpInstance.resize(scaledWidth);
+	if (!options.enableScaledVariants) {
 		options.formats?.forEach(format => {
 			const generator = generatorMap[format];
-			promises.push(generator.generate(sharpInstance, `${output}@${_scale}x.${generator.extension}`, options.formatOptions?.[format]));
+			promises.push(generator.generate(sharpInstance, `${output}@${initialScale}x.${generator.extension}`, options.formatOptions?.[format]));
 		})
+	} else {
+		for (let i = initialScale; i > 0; i--) {
+			const _scale = i;
+			const scaledWidth = Math.round(width * (_scale / initialScale));
+			sharpInstance.resize(scaledWidth);
+			options.formats?.forEach(format => {
+				const generator = generatorMap[format];
+				promises.push(generator.generate(sharpInstance, `${output}@${_scale}x.${generator.extension}`, options.formatOptions?.[format]));
+			})
+		}
 	}
 	// GENERATE LQIP IMAGE
 	sharpInstance.resize(64);
