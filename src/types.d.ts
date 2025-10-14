@@ -13,7 +13,7 @@ export type BaseOptions<F extends ImageFormat = DefaultFormats[number] | ImageFo
 	/**
 	 * @param {ImageFormat[]} formats - Image formats to convert to
 	 */
-	formats?: NonEmptyTuple<F>;
+	formats?: NonEmptyTuple<F> | ImageFormat[];
 	/**
 	 * @param {Record<string, any>} formatOptions - Options for each format
 	 */

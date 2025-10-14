@@ -71,6 +71,7 @@ export const generateImages = async (input: string, directory: string, baseFilen
 			promises.push(generator.generate(sharpInstance, `${output}@${initialScale}x.${generator.extension}`, options.formatOptions?.[format]));
 		})
 	} else {
+		// GENERATE SCALED VARIANTS
 		for (let i = initialScale; i > 0; i--) {
 			const _scale = i;
 			const scaledWidth = Math.round(width * (_scale / initialScale));
@@ -90,7 +91,6 @@ export const generateImages = async (input: string, directory: string, baseFilen
 	options?.removableExtensions?.forEach(async ext => {
 		await deleteMatching(directory!, new RegExp(`${baseFilename}@.*.${ext}`));
 	});
-
 }
 
 /** Run promises with concurrency limit
@@ -163,7 +163,7 @@ export const processQueues = async (directory: string, baseFilename: string, opt
 		);
 	}
 	isProcessing = false;
-	options.enableLogs && logGeneratedFiles(generetedFiles);
+	if (options.enableLogs) logGeneratedFiles(generetedFiles);
 	queueTimer.end();
 	await delay(200);
 	processFileQueue.clear();

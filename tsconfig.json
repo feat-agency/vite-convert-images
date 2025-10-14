@@ -19,6 +19,7 @@
 	"include": [
 		"src",
 		"test",
+		"tests",
 		"vite.config.ts",
 		"tsup.config.ts"
 	],

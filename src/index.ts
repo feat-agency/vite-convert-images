@@ -2,7 +2,7 @@ import type { Plugin } from "vite";
 import { BaseOptions, DefaultFormats, ImageFormat } from "./types";
 import { debounce, delay, deleteMatching, generateImages, options, pathToRegex, processFileQueue, processQueue, processQueues, removeQueue, setOptions } from "./utils/utils";
 
-const viteConvertImages = <F extends ImageFormat = DefaultFormats[number] | ImageFormat>(
+const viteConvertImages = <F extends ImageFormat = DefaultFormats[number]>(
 	_options?: BaseOptions<F>
 ): Plugin => {
 	setOptions(_options || {});
