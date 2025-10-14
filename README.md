@@ -81,3 +81,7 @@ Modern web performance starts with images. `vite-convert-images` helps you ship 
 - https://www.smashingmagazine.com/2021/09/modern-image-formats-avif-webp
 - https://caniuse.com/webp
 - https://caniuse.com/avif
+
+## 📄 License <span name="license"></span>
+
+MIT License © 2025 [feat.](https://feat.agency)
