@@ -17,4 +17,4 @@ jobs:
   - name: Run oxlint
     run: npm run lint
   - name: Run vitest
-    run: npx vitest --environment jsdom run
+    run: npx vitest run
