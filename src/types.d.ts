@@ -43,9 +43,5 @@ export type BaseOptions<F extends ImageFormat = DefaultFormats[number] | ImageFo
 	 * @default true
 	 */
 	enableLogs?: boolean;
-	/**
-	 * @param {RegExp} nameLabel - Regular expression to capture a label in the filename (e.g., '@2x', '-large', '_thumbnail')
-	 */
-	nameLabel?: RegExp;
 };
 

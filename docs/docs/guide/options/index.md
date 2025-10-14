@@ -50,6 +50,11 @@ Number of concurrent image processing tasks
 - Type `number`
 - Default `4`
 
+## `enableScaledVariants`
+Generate scaled variants based on the highest-resolution image
+- Type `boolean`
+- Default `true`
+
 ## `enableLogs`
 Log generated files to the console
 - Type `boolean`
