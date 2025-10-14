@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-	title: "Vite Convert Images",
+	title: "🖼️ Vite Convert Images",
 	description: "Convert images to modern formats and create different conversions.",
 	themeConfig: {
 		// https://vitepress.dev/reference/default-theme-config
@@ -25,7 +25,7 @@ export default defineConfig({
 		],
 
 		socialLinks: [
-			{ icon: 'github', link: 'https://github.com/mateenagy/vite-convert-images' }
+			{ icon: 'github', link: 'https://github.com/feat-agency/vite-convert-images' }
 		]
 	}
 })
