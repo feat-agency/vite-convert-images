@@ -76,6 +76,7 @@ Options for each format. This plugin using [`Sharp`](https://sharp.pixelplumbing
 	```
 - `webp`
 	- Type: [`WebpOptions`](https://sharp.pixelplumbing.com/api-output/#webp)
+	- Default
 	```ts
 	{
 		quality: 90,
