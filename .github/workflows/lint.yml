@@ -10,20 +10,16 @@ jobs:
 
   steps:
   - uses: actions/checkout@v4
-  - uses: actions/setup-node@v4
-    with:
-        node-version: 20
-  - run: npm i
+  - uses: oven-sh/setup-bun@v2
+  - run: bun i
   - name: Run oxlint
-    run: npm run lint
+    run: bun run lint
  test:
   runs-on: ubuntu-latest
 
   steps:
   - uses: actions/checkout@v4
-  - uses: actions/setup-node@v4
-    with:
-        node-version: 20
-  - run: npm i
+  - uses: oven-sh/setup-bun@v2
+  - run: bun i
   - name: Run vitest
-    run: npx vitest run
+    run: bunx vitest run
